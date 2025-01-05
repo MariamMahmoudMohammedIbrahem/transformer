@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 
-import '../constants/constants.dart';
-import '../main.dart';
-import '../widgets/local_notification_helper.dart';
+import '../commons.dart';
 
 enum MQTTAppConnectionState { connected, disconnected, connecting }
 
@@ -21,22 +17,18 @@ class MQTTAppState with ChangeNotifier {
   String _historyText = '';
   final Map<String, dynamic> _dataByTopic = {};
 
-  List<String> _devices = [];
+  final List<String> _devices = [];
   String _selectedDevice = '';
 
   void setReceivedText(String topic, String jsonText) {
-    print('topic => $topic, jsonText => $jsonText');
-    // Decode the incoming JSON
     try {
       final data = json.decode(jsonText);
       if (data is Map<String, dynamic>) {
         _dataByTopic[topic] = data;
-        print('_dataByTopic $_dataByTopic, topic $topic, _dataByTopic[topic] $_dataByTopic[topic]');
         _historyText = '$_historyText\n$jsonText';
         notifyListeners();
       }
     } catch (e) {
-      print("Error decoding JSON: $e");
     }
   }
 
@@ -56,17 +48,7 @@ class MQTTAppState with ChangeNotifier {
         checkAndNotify(data, 'Amb_Temp_Status', 'Ambient Temperature Alert', 7);
         checkAndNotify(data, 'Oil_Temp_Status', 'Oil Temperature Alert', 7);
 
-        // Example check for another parameter
-        // if (data['load_per'] != null && data['load_per'] > 80) {
-        //   showOngoingNotification(notifications, title: 'Load Alert', body: 'High Load Detected', id: 9);
-        // }
-        // "Oil_Level_Status": "low",
-    // "Bokhlez_Status1": "inactive",
-    // "Bokhlez_Status2": "inactive",
-    // "Amb_Temp_Status": "high",
-    // "Oil_Temp_Status": "low",
       }
-    // }
   }
 
   void checkAndNotify(Map<String, dynamic> data, String key, String title, int id) {
@@ -97,24 +79,10 @@ class MQTTAppState with ChangeNotifier {
     notifyListeners();
   }
 
-  /*double getDataFromMap (String dataType) {
-    final topic = 'remote/$_selectedDevice/$dataType';
-    final data = _dataByTopic[topic];
-    return data != null ? data[dataType] ?? 0.0 : 0.0;
-  }*/
-
-  /*String getDataFromMap(String dataType) {
-    final topic = 'EOIP/$_selectedDevice/sensor/data';
-    // final topic = 'remote/$_selectedDevice/$dataType';
-    final data = _dataByTopic[topic];
-    print('data[$dataType] => ${data[dataType]}');
-    return data != null ? data[dataType]?.toString() ?? '' : '';
-  }*/
 
   String getDataFromMap(String dataType, String type) {
     final topic = 'EOIP/dev1/$type/energy/transformer';
     final data = _dataByTopic[topic];
-    print('Data for topic "$topic": $data');  // Debugging line
     if (data == null) {
       return '';
     }

@@ -1,4 +1,5 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../commons.dart';
 
 Future<void> showOngoingNotification(
     FlutterLocalNotificationsPlugin notifications, {
@@ -12,12 +13,9 @@ Future<void> showOngoingNotification(
 
     final List<ActiveNotification> activeNotifications =
     await notifications.getActiveNotifications();
-    // print('notifications: $activeNotifications');
-    // Check if a notification with the same ID is already pending
     bool notificationExists =
     activeNotifications.any((notification) => notification.id == id);
 
-    // Only show the notification if it doesn't exist
     if (!notificationExists) {
       await notifications.show(
         id,
@@ -38,7 +36,6 @@ Future<void> showOngoingNotification(
       );
     }
   } catch (e) {
-    // /print('Error showing notification: $e');
   }
 }
 
